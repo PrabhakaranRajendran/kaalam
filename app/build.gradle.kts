@@ -6,9 +6,8 @@ plugins {
 
 // The release key must never change: Google sign-in (Drive + Calendar) is tied to its SHA-1,
 // and Android only installs updates signed with the same key.
-// Order: SIGNING_FILE from the GitHub workflow secret, then keystore/kaalam-release.p12 in the repo.
+// Set by the GitHub workflow from the SIGNING_KEY secret. Local builds fall back to the debug key.
 val signingFile: File? = System.getenv("SIGNING_FILE")?.let { file(it) }
-    ?: rootProject.file("keystore/kaalam-release.p12").takeIf { it.exists() }
 
 android {
     namespace = "com.prabhu.kaalam"
@@ -20,6 +19,7 @@ android {
         targetSdk = 35
         versionCode = (System.getenv("VERSION_CODE") ?: "1").toInt()
         versionName = System.getenv("VERSION_NAME") ?: "1.0.0-dev"
+        buildConfigField("String", "UPDATE_REPO", "\"PrabhakaranRajendran/kaalam\"")
     }
 
     signingConfigs {

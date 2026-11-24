@@ -14,6 +14,7 @@ A personal Android app: an age calculator plus birthdays, anniversaries and your
 - **Google Drive**: `My Drive/Kaalam/kaalam_data.enc` is AES-256 encrypted with your PIN. It saves after every change and keeps one daily copy in `backups/` (the last 7 days). You can restore on a new phone with the same PIN.
 - **Admin**: shows stats and has your profile, people, custom event types, Drive, calendar and security settings, import from contacts, and export to CSV for Excel.
 - **Notifications**: a reminder with a **Send wish** button that opens WhatsApp with a ready-made message.
+- **Updates from GitHub**: Admin › App updates › Check now looks at this repo's Releases page, the same way Wallpaper Studio does.
 
 ## One-time Google Cloud setup (needed for Drive + Calendar)
 

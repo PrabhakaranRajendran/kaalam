@@ -50,6 +50,10 @@ object Prefs {
     var calendarReminders: Boolean get() = bool("calReminders", false); set(v) = setBool("calReminders", v)
     var lastCalendarSync: Long get() = sp.getLong("lastCalSync", 0); set(v) = sp.edit().putLong("lastCalSync", v).apply()
 
+    // ---- App updates ----
+    var lastUpdateCheck: Long get() = sp.getLong("lastUpdateCheck", 0); set(v) = sp.edit().putLong("lastUpdateCheck", v).apply()
+    var autoUpdateCheck: Boolean get() = bool("autoUpdate", true); set(v) = setBool("autoUpdate", v)
+
     // ---- Notifications ----
     var reminderHour: Int get() = sp.getInt("reminderHour", 7); set(v) = sp.edit().putInt("reminderHour", v).apply()
     var sentKeys: Set<String>

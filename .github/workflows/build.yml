@@ -2,7 +2,8 @@ name: Build APK
 
 # Every push to main builds a test APK (kept as a download on the run page).
 # To publish a version: Actions > Build APK > Run workflow, type the version
-# (e.g. 1.0.0). The signed APK goes on the Releases page. Pushing a tag like v1.0.0 does the same.
+# (e.g. 1.0.0). The signed APK goes on the Releases page, where the app's
+# "Check for updates" finds it. Pushing a tag like v1.0.0 does the same.
 # Signing: the SIGNING_KEY secret (base64 of the .p12). The key must never change, because
 # Google sign-in is registered against its SHA-1.
 on:
@@ -56,8 +57,11 @@ jobs:
           if [ -n "$SIGNING_KEY" ]; then
             echo "$SIGNING_KEY" | base64 -d > "$RUNNER_TEMP/release.p12"
             echo "SIGNING_FILE=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"
-          elif [ ! -f keystore/kaalam-release.p12 ]; then
-            echo "::warning title=Signing key missing::Built with a temporary debug key. Add the SIGNING_KEY secret, otherwise Google sign-in will not work."
+          elif [ "$RELEASE" = "true" ]; then
+            echo "::error title=Signing key missing::Add the SIGNING_KEY secret before publishing a release."
+            exit 1
+          else
+            echo "::warning title=Signing key missing::Test build uses a temporary debug key. Add the SIGNING_KEY secret, otherwise Google sign-in will not work."
           fi
 
       - name: Build

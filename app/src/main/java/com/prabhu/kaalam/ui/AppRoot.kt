@@ -91,6 +91,9 @@ private fun MainScaffold(activity: MainActivity) {
     val nav = remember { Nav() }
     val data by Repo.data.collectAsState()
 
+    AutoUpdateCheck()
+    UpdateDialog()
+
     BackHandler(enabled = !nav.isRoot) { nav.back() }
     BackHandler(enabled = nav.isRoot && nav.current != Route.Home) { nav.tab(Route.Home) }
 

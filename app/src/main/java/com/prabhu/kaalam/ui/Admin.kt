@@ -121,6 +121,7 @@ fun AdminScreen(nav: Nav, data: AppData, activity: MainActivity) {
                     exportLauncher.launch("Kaalam_${LocalDate.now()}.csv")
                 }
             }
+            AppUpdatesSection()
             Text(
                 "Kaalam v${BuildConfig.VERSION_NAME}",
                 fontSize = 11.sp, color = K.Faint, modifier = Modifier.fillMaxWidth().padding(top = 18.dp), textAlign = TextAlign.Center,
