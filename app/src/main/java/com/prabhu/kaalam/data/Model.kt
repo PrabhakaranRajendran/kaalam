@@ -38,6 +38,7 @@ data class Person(
     val phone: String = "",
     val color: Int = 0,
     val notes: String = "",
+    val photo: Long = 0,          // 0 = no photo; otherwise the time it was set (busts image caches)
     val events: List<Event> = emptyList(),
 )
 
@@ -51,6 +52,7 @@ data class AppData(
     val people: List<Person> = emptyList(),
     val customTypes: List<String> = listOf("Graduation day", "Puja", "Shop anniversary"),
     val pendingCalendarDeletes: List<String> = emptyList(),
+    val wishDefaults: Map<String, String> = emptyMap(),   // EventType.key -> your default WhatsApp message
     val updatedAt: Long = 0,
 )
 

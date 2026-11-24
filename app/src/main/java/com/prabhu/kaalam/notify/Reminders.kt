@@ -105,8 +105,10 @@ object Reminders {
             .setContentIntent(open)
             .setSubText("Kaalam")
 
-        val wish = Intent(Intent.ACTION_VIEW, Uri.parse(Texts.whatsAppUrl(p.phone, Texts.wishMessage(p, ev))))
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val wish = Intent(ctx, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            .putExtra(MainActivity.EXTRA_WISH_PERSON, p.id)
+            .putExtra(MainActivity.EXTRA_WISH_EVENT, ev.id)
         builder.addAction(
             0, "Send wish",
             PendingIntent.getActivity(ctx, id + 1, wish, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT),

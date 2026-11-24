@@ -99,6 +99,8 @@ fun AdminScreen(nav: Nav, data: AppData, activity: MainActivity) {
                 ThinDivider()
                 NavRow(Icons.Rounded.People, K.TealLight, "People & events", "View, open or delete everyone") { nav.go(Route.ManagePeople) }
                 ThinDivider()
+                NavRow(Icons.Rounded.Chat, Color(0xFFDDF7E7), "Wish messages", "Your default WhatsApp text for each event type", iconTint = K.Green) { nav.go(Route.WishTemplates) }
+                ThinDivider()
                 NavRow(Icons.Rounded.Star, K.AmberBg, "Custom event types", data.customTypes.take(3).joinToString(", ").ifBlank { "Your own event names" }, iconTint = K.AmberInk) { nav.go(Route.CustomTypes) }
                 ThinDivider()
                 NavRow(Icons.Rounded.Cloud, Color(0xFFE8F0FE), "Google Drive data", if (connected) "Backed up ${timeAgo(Prefs.lastBackupAt)}" else "Not connected", iconTint = K.Blue) { nav.go(Route.Drive) }

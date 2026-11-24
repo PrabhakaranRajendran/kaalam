@@ -60,6 +60,8 @@ fun PersonScreen(nav: Nav, data: AppData, personId: String) {
     val today = LocalDate.now()
     var editing by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
+    var photoMenu by remember { mutableStateOf(false) }
+    val pickPhoto = rememberPhotoPicker { savePhoto(ctx, person.id, it) }
     val occ = person.events.map { DateMath.occurrence(person, it, today) }
         .sortedWith(compareBy({ it.daysLeft == null }, { it.daysLeft ?: Long.MAX_VALUE }))
     val nextOcc = occ.firstOrNull { it.date != null }
@@ -75,9 +77,16 @@ fun PersonScreen(nav: Nav, data: AppData, personId: String) {
                 SquareIconButton(Icons.Rounded.DeleteOutline, light = true, contentDescription = "Delete") { confirmDelete = true }
             }
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(Modifier.border(3.dp, Color.White.copy(alpha = 0.5f), RoundedCornerShape(26.dp)).padding(3.dp)) {
-                    Avatar(person.name, person.color, size = 72.dp, corner = 23.dp, fontSize = 30)
+                Box(Modifier.border(3.dp, Color.White.copy(alpha = 0.5f), RoundedCornerShape(30.dp)).padding(3.dp).clickable { photoMenu = true }) {
+                    PersonAvatar(person, size = 92.dp, corner = 27.dp, fontSize = 36)
+                    DropdownMenu(expanded = photoMenu, onDismissRequest = { photoMenu = false }) {
+                        DropdownMenuItem(text = { Text(if (person.photo > 0) "Change photo" else "Add photo") }, onClick = { photoMenu = false; pickPhoto() })
+                        if (person.photo > 0) DropdownMenuItem(text = { Text("Remove photo") }, onClick = {
+                            photoMenu = false; com.prabhu.kaalam.wish.PhotoStore.delete(ctx, person.id); Repo.setPhoto(person.id, 0)
+                        })
+                    }
                 }
+                if (person.photo <= 0) Text("Tap to add photo", color = Color.White.copy(alpha = 0.6f), fontSize = 11.sp)
                 Spacer(Modifier.height(8.dp))
                 Text(person.name, color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
                 val sub = listOfNotNull(person.relation.ifBlank { null }, person.phone.ifBlank { null }?.let { "📞 $it" }).joinToString(" · ")
@@ -143,10 +152,7 @@ fun PersonScreen(nav: Nav, data: AppData, personId: String) {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 val wishEvent = nextOcc?.event ?: person.events.firstOrNull()
                 PrimaryButton("💬 Send wish", Modifier.weight(1f), enabled = wishEvent != null, color = K.WhatsApp) {
-                    if (wishEvent != null) {
-                        val url = Texts.whatsAppUrl(person.phone, Texts.wishMessage(person, wishEvent))
-                        (ctx as? MainActivity)?.openExternal(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                    }
+                    if (wishEvent != null) nav.go(Route.Wish(person.id, wishEvent.id))
                 }
                 SoftButton("+ Add event", Modifier.weight(1f)) { nav.go(Route.EditEvent(person.id, null)) }
             }
@@ -232,6 +238,9 @@ fun EditEventScreen(nav: Nav, data: AppData, personId: String?, eventId: String?
     var customDays by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+    var newPhoto by remember { mutableStateOf<Uri?>(null) }
+    val ctx = LocalContext.current
+    val pickNewPhoto = rememberPhotoPicker { newPhoto = it }
     val evType = EventType.of(type)
     val date = dateText.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
 
@@ -257,6 +266,7 @@ fun EditEventScreen(nav: Nav, data: AppData, personId: String?, eventId: String?
         if (isNewPerson) {
             val p = Person(name = name.trim(), relation = relation.trim(), phone = phone.trim(), color = data.people.size % K.avatarColors.size, events = listOf(ev))
             Repo.upsertPerson(p)
+            newPhoto?.let { savePhoto(ctx, p.id, it) }
             nav.replace(Route.PersonDetail(p.id))
         } else {
             Repo.upsertEvent(personId!!, ev)
@@ -270,11 +280,19 @@ fun EditEventScreen(nav: Nav, data: AppData, personId: String?, eventId: String?
         }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
             if (isNewPerson) {
-                OutlinedTextField(
-                    name, { name = it }, label = { Text(if (evType == EventType.ANNIVERSARY) "Name (e.g. Ravi & Meena)" else "Name") },
-                    singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), colors = kFieldColors(),
-                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        Modifier.size(58.dp).clip(RoundedCornerShape(18.dp)).background(K.TealLight)
+                            .border(1.5.dp, K.Teal, RoundedCornerShape(18.dp)).clickable { pickNewPhoto() },
+                        contentAlignment = Alignment.Center,
+                    ) { Text(if (newPhoto != null) "✅" else "📷", fontSize = 22.sp) }
+                    Spacer(Modifier.width(10.dp))
+                    OutlinedTextField(
+                        name, { name = it }, label = { Text(if (evType == EventType.ANNIVERSARY) "Name (e.g. Ravi & Meena)" else "Name") },
+                        singleLine = true, modifier = Modifier.weight(1f), shape = RoundedCornerShape(12.dp), colors = kFieldColors(),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                    )
+                }
                 Spacer(Modifier.height(8.dp))
                 RelationField(relation, Modifier.fillMaxWidth()) { relation = it }
                 Spacer(Modifier.height(8.dp))

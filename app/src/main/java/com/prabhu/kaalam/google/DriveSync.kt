@@ -7,6 +7,7 @@ import com.prabhu.kaalam.data.Repo
 import com.prabhu.kaalam.data.Store
 import com.prabhu.kaalam.security.Prefs
 import com.prabhu.kaalam.security.Vault
+import com.prabhu.kaalam.wish.PhotoStore
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,7 +102,9 @@ object DriveSync {
         if (auto && Prefs.wifiOnly && !onWifi(ctx)) return@withLock
         busy.value = true
         try {
-            val payload = Vault.encryptForDrive(Store.toJson(Repo.data.value)).toByteArray(Charsets.UTF_8)
+            val d = Repo.data.value
+            val json = JSONObject(Store.toJson(d)).put("photos", PhotoStore.exportAll(ctx, d)).toString()
+            val payload = Vault.encryptForDrive(json).toByteArray(Charsets.UTF_8)
             val folderId = folder(ctx, FOLDER, null)
             val existing = find(ctx, "name = '$FILE' and '$folderId' in parents and trashed = false").firstOrNull()
             if (existing != null) updateFile(ctx, existing.id, payload) else createFile(ctx, FILE, folderId, payload)

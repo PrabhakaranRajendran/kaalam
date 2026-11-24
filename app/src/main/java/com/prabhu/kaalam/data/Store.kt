@@ -18,6 +18,7 @@ object Store {
         })
         o.put("customTypes", JSONArray(d.customTypes))
         o.put("pendingCalendarDeletes", JSONArray(d.pendingCalendarDeletes))
+        o.put("wishDefaults", JSONObject().apply { d.wishDefaults.forEach { (k, v) -> put(k, v) } })
         o.put("people", JSONArray().apply { d.people.forEach { put(person(it)) } })
         return o.toString()
     }
@@ -29,6 +30,7 @@ object Store {
         put("phone", p.phone)
         put("color", p.color)
         put("notes", p.notes)
+        put("photo", p.photo)
         put("events", JSONArray().apply { p.events.forEach { put(event(it)) } })
     }
 
@@ -55,6 +57,7 @@ object Store {
             people = o.optJSONArray("people").objects().map { readPerson(it) },
             customTypes = o.optJSONArray("customTypes").strings(),
             pendingCalendarDeletes = o.optJSONArray("pendingCalendarDeletes").strings(),
+            wishDefaults = o.optJSONObject("wishDefaults")?.let { w -> w.keys().asSequence().associateWith { w.optString(it) } } ?: emptyMap(),
             updatedAt = o.optLong("updatedAt", 0),
         )
     }
@@ -66,6 +69,7 @@ object Store {
         phone = o.optString("phone"),
         color = o.optInt("color", 0),
         notes = o.optString("notes"),
+        photo = o.optLong("photo", 0),
         events = o.optJSONArray("events").objects().mapNotNull { readEvent(it) },
     )
 

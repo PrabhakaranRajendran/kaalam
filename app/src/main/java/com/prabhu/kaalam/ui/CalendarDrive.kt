@@ -408,6 +408,7 @@ private fun RestoreDialog(r: DriveSync.Remote, onDismiss: () -> Unit, onDone: (I
                             try { Vault.decryptFromDrive(text, pin) } catch (e: javax.crypto.AEADBadTagException) { throw Exception("Wrong password for this backup") }
                         }
                         val restored = Store.fromJson(json)
+                        com.prabhu.kaalam.wish.PhotoStore.importAll(ctx, org.json.JSONObject(json).optJSONObject("photos"))
                         withContext(Dispatchers.Default) { Vault.setPin(pin) } // this phone now uses the backup's password
                         Repo.replaceAll(restored.copy(people = restored.people.map { p -> p.copy(events = p.events.map { it.copy(calendarSynced = false) }) }))
                         runCatching { DriveSync.uploadNow(ctx) }

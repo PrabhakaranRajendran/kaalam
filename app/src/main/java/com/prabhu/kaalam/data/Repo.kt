@@ -92,7 +92,16 @@ object Repo {
         })
     }
 
+    fun setPhoto(personId: String, version: Long) = update { d ->
+        d.copy(people = d.people.map { if (it.id == personId) it.copy(photo = version) else it })
+    }
+
+    fun setWishDefault(type: EventType, text: String?) = update { d ->
+        d.copy(wishDefaults = if (text.isNullOrBlank()) d.wishDefaults - type.key else d.wishDefaults + (type.key to text))
+    }
+
     fun deletePerson(id: String) = update { d ->
+        runCatching { File(app.filesDir, "photos/$id.jpg").delete() }
         val gone = d.people.firstOrNull { it.id == id }
         val calIds = gone?.events?.mapNotNull { it.calendarEventId }.orEmpty()
         d.copy(

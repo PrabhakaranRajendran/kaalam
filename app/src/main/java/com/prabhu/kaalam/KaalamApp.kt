@@ -28,10 +28,28 @@ class KaalamApp : Application() {
 
 /** FragmentActivity (not plain ComponentActivity) because the fingerprint prompt needs it. */
 class MainActivity : FragmentActivity() {
+    companion object {
+        const val EXTRA_WISH_PERSON = "wishPerson"
+        const val EXTRA_WISH_EVENT = "wishEvent"
+    }
+
+    private fun handleWish(intent: android.content.Intent?) {
+        val p = intent?.getStringExtra(EXTRA_WISH_PERSON) ?: return
+        val e = intent.getStringExtra(EXTRA_WISH_EVENT) ?: return
+        intent.removeExtra(EXTRA_WISH_PERSON)
+        AppState.pendingWish = p to e
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        handleWish(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Prefs.init(this)
         Repo.init(this)
+        handleWish(intent)
         enableEdgeToEdge()
         applySecureFlags()
         setContent { KaalamTheme { AppRoot(this) } }

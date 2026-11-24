@@ -33,6 +33,8 @@ object AppState {
     var adminUnlocked by mutableStateOf(false)
     var backgroundAt = 0L
     var skipLockUntil = 0L
+    /** Set when the notification's "Send wish" button opens the app. */
+    var pendingWish by mutableStateOf<Pair<String, String>?>(null)
 
     fun lock() {
         locked = true
@@ -60,6 +62,8 @@ sealed interface Route {
     data object ManagePeople : Route
     data object CustomTypes : Route
     data object ImportContacts : Route
+    data class Wish(val personId: String, val eventId: String?) : Route
+    data object WishTemplates : Route
 }
 
 class Nav {
@@ -93,6 +97,12 @@ private fun MainScaffold(activity: MainActivity) {
 
     AutoUpdateCheck()
     UpdateDialog()
+    LaunchedEffect(AppState.pendingWish) {
+        AppState.pendingWish?.let { (p, e) ->
+            nav.go(Route.Wish(p, e))
+            AppState.pendingWish = null
+        }
+    }
 
     BackHandler(enabled = !nav.isRoot) { nav.back() }
     BackHandler(enabled = nav.isRoot && nav.current != Route.Home) { nav.tab(Route.Home) }
@@ -120,6 +130,8 @@ private fun MainScaffold(activity: MainActivity) {
                 Route.ManagePeople -> ManagePeopleScreen(nav, data)
                 Route.CustomTypes -> CustomTypesScreen(nav, data)
                 Route.ImportContacts -> ImportContactsScreen(nav, data)
+                is Route.Wish -> WishScreen(nav, data, r.personId, r.eventId)
+                Route.WishTemplates -> WishTemplatesScreen(nav, data)
             }
         }
     }

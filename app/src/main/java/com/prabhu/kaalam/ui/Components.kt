@@ -86,7 +86,7 @@ fun Avatar(name: String, colorIndex: Int, size: Dp = 42.dp, corner: Dp = 14.dp, 
 }
 
 @Composable
-fun PersonAvatar(p: Person, size: Dp = 42.dp) = Avatar(p.name, p.color, size)
+fun PersonAvatar(p: Person, size: Dp = 42.dp, corner: Dp = 14.dp, fontSize: Int = 16) = PersonPhotoAvatar(p, size, corner, fontSize)
 
 @Composable
 fun Pill(text: String, bg: Color, fg: Color, modifier: Modifier = Modifier) {
@@ -196,11 +196,12 @@ fun GradientHeader(bottomPadding: Dp = 24.dp, content: @Composable ColumnScope.(
 fun PrimaryButton(text: String, modifier: Modifier = Modifier, enabled: Boolean = true, loading: Boolean = false, color: Color = K.Teal, onClick: () -> Unit) {
     Button(
         onClick = onClick, enabled = enabled && !loading, modifier = modifier.height(50.dp),
+        contentPadding = PaddingValues(horizontal = 10.dp),
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(containerColor = color, contentColor = Color.White),
     ) {
         if (loading) CircularProgressIndicator(Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp)
-        else Text(text, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+        else Text(text, fontWeight = FontWeight.SemiBold, fontSize = 15.sp, maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -211,7 +212,8 @@ fun SoftButton(text: String, modifier: Modifier = Modifier, enabled: Boolean = t
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(containerColor = K.TealLight, contentColor = K.Teal),
         elevation = null,
-    ) { Text(text, fontWeight = FontWeight.SemiBold, fontSize = 14.sp) }
+        contentPadding = PaddingValues(horizontal = 10.dp),
+    ) { Text(text, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis) }
 }
 
 @Composable

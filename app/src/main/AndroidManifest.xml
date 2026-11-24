@@ -9,6 +9,12 @@
     <!-- Lets "Update now" open the Android installer. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- Lets Kaalam see whether WhatsApp is installed (Android 11+). -->
+    <queries>
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+    </queries>
+
     <!-- allowBackup is off on purpose: the data key lives in the Android Keystore and
          cannot be restored by Android's own backup. Kaalam backs up to your Google Drive instead. -->
     <application
