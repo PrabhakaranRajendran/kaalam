@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- faint full ring -->
+    <path android:fillColor="#00000000" android:strokeColor="#40FFFFFF" android:strokeWidth="4.5"
+        android:pathData="M54,32 a24,24 0 1,1 -0.01,0" />
+    <!-- 3/4 progress ring -->
+    <path android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="4.5"
+        android:strokeLineCap="round"
+        android:pathData="M54,32 A24,24 0 1,1 32.4,66.5" />
+    <!-- cake -->
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M44,56 h20 a3,3 0 0,1 3,3 v8 a3,3 0 0,1 -3,3 h-20 a3,3 0 0,1 -3,-3 v-8 a3,3 0 0,1 3,-3 z" />
+    <path android:fillColor="#FF13838E" android:pathData="M41,60 h26 v2.5 h-26 z" />
+    <!-- candle -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M52.8,47 h2.4 v9 h-2.4 z" />
+    <!-- flame -->
+    <path android:fillColor="#FFFFC857"
+        android:pathData="M54,39.5 c2.6,2.6 2.6,5.2 0,6.2 c-2.6,-1 -2.6,-3.6 0,-6.2 z" />
+</vector>
